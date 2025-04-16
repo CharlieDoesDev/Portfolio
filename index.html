@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Portfolio</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>My Portfolio</h1>
+    </header>
+
+    <section class="portfolio-grid" id="portfolio-container"></section>
+
+    <div class="project-modal" id="project-modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <img id="modal-image" alt="Project Image" />
+        <h2 id="modal-title"></h2>
+        <p id="modal-description"></p>
+        <div id="modal-content"></div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fetch("projects.json")
+          .then((response) => response.json())
+          .then((projects) => {
+            const container = document.getElementById("portfolio-container");
+
+            projects.forEach((project) => {
+              const projectEl = document.createElement("article");
+              projectEl.className = "portfolio-item";
+              projectEl.innerHTML = `
+                            <img src="${project.image}" alt="${project.title}">
+                            <h3>${project.title}</h3>
+                            <p class="short-description">${project.shortDescription}</p>
+                        `;
+
+              projectEl.addEventListener("click", () => openModal(project));
+              container.appendChild(projectEl);
+            });
+          });
+
+        const modal = document.getElementById("project-modal");
+        const closeBtn = document.querySelector(".close");
+
+        closeBtn.addEventListener(
+          "click",
+          () => (modal.style.display = "none")
+        );
+        window.addEventListener("click", (e) => {
+          if (e.target === modal) modal.style.display = "none";
+        });
+      });
+
+      function openModal(project) {
+        const modal = document.getElementById("project-modal");
+        document.getElementById("modal-image").src = project.image;
+        document.getElementById("modal-title").textContent = project.title;
+        document.getElementById("modal-description").textContent =
+          project.description;
+        document.getElementById("modal-content").innerHTML = project.content;
+        modal.style.display = "block";
+      }
+    </script>
+  </body>
+</html>
